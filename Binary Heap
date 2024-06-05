@@ -1,0 +1,137 @@
+#include <iostream>
+#include <random>
+#include <chrono>
+using namespace std;
+
+class MinHeap {
+    const int SIZE = 1020000; 
+    int* heapArray;     
+    int HeapSize; 
+
+    double extractMinTime = 0;
+    double insertTime = 0;
+public:
+    MinHeap() {
+        heapArray = new int[SIZE];
+        HeapSize = 0;
+    }
+
+    int ExtractMin()
+    {
+        int x;
+        x = heapArray[0];
+        heapArray[0] = heapArray[HeapSize - 1];
+        --HeapSize;
+        Heapify(0);
+        return(x);
+    }
+
+    void Heapify(int i)
+    {
+        int left, right, smallest;
+
+        left = 2 * i + 1;
+        right = 2 * i + 2;
+        smallest = i;
+
+        if (left < HeapSize && heapArray[left] < heapArray[smallest])  smallest = left;
+        if (right < HeapSize && heapArray[right] < heapArray[smallest])  smallest = right;
+
+        if (smallest != i) 
+        {
+            int temp;
+            temp = heapArray[i];
+            heapArray[i] = heapArray[smallest];
+            heapArray[smallest] = temp;
+            Heapify(smallest);
+        }
+    }
+
+    void Insert(int n)
+    {
+        int i, parent;
+
+        i = HeapSize;
+        heapArray[i] = n;
+
+        parent = (i - 1) / 2;
+        while (parent >= 0 && i > 0) 
+        {
+            if (heapArray[i] < heapArray[parent]) 
+            {
+                int temp = heapArray[i];
+                heapArray[i] = heapArray[parent];
+                heapArray[parent] = temp;
+            }
+
+            i = parent;
+            parent = (i - 1) / 2;
+        }
+        HeapSize++;
+    }
+
+    void InorderWalk()
+    {
+        for (int i = 0; i < HeapSize; i++) 
+        {
+            cout << heapArray[i] << " ";
+        }
+        cout << endl;
+    }
+
+    double getInsertTime()
+    {
+        return insertTime;
+    }
+    double getExtractMinTime()
+    {
+        return extractMinTime;
+    }
+
+    void PerformRandomOperation(int numOperations)
+    {
+        srand(time(nullptr));
+        for (int i = 0; i < numOperations; ++i)
+        {
+            int operationType = rand() % 2;
+            auto start = std::chrono::high_resolution_clock::now();
+            auto end = start;
+
+            std::chrono::duration<double> duration;
+
+            if (operationType == 0)
+            {
+                start = std::chrono::high_resolution_clock::now();
+                ExtractMin();
+                end = std::chrono::high_resolution_clock::now();
+                duration = end - start;
+                extractMinTime += duration.count();
+            }
+            else
+            {
+                start = std::chrono::high_resolution_clock::now();
+                Insert(rand() % 10000);
+                end = std::chrono::high_resolution_clock::now();
+                duration = end - start;
+                insertTime += duration.count();
+            }
+        }
+    }
+};
+
+int main() {
+    MinHeap heap;
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dist(1, 1000000);
+    for (int i = 0; i < 1000000; ++i)
+    {
+        heap.Insert(dist(gen));
+    }
+     
+    heap.PerformRandomOperation(200000);
+    cout << "Ins duration: " << heap.getInsertTime() << endl;
+    cout << "Ext duration: " << heap.getExtractMinTime() << endl;
+
+    return 0;
+}
