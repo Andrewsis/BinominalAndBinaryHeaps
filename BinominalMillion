@@ -3,7 +3,7 @@
 #include <chrono>
 using namespace std;
 
-struct Node 
+struct Node
 {
 	int key;
 	int degree;
@@ -14,7 +14,7 @@ struct Node
 
 	Node(int value)
 	{
-		key = value;		
+		key = value;
 		degree = 0;
 		parent = nullptr;
 		child = nullptr;
@@ -31,7 +31,7 @@ private:
 
 	double InsertTime = 0;
 	double extractMinTime = 0;
-	
+
 	Node* Union(Node* h1, Node* h2, bool operationType)
 	{
 		Node* nextHead = Merge(h1, h2);
@@ -80,7 +80,7 @@ private:
 		return nextHead;
 	}
 
-	Node* LinkTrees(Node* firstTree, Node* secondTree) 
+	Node* LinkTrees(Node* firstTree, Node* secondTree)
 	{
 		if (firstTree->key > secondTree->key) swap(firstTree, secondTree);
 		secondTree->parent = firstTree;
@@ -100,7 +100,7 @@ private:
 		Node* head = nullptr;
 		Node* tail = nullptr;
 
-		while (firstTree && secondTree) 
+		while (firstTree && secondTree)
 		{
 			Node* min;
 			if (firstTree->degree <= secondTree->degree)
@@ -108,7 +108,7 @@ private:
 				min = firstTree;
 				firstTree = firstTree->sibling;
 			}
-			else 
+			else
 			{
 				min = secondTree;
 				secondTree = secondTree->sibling;
@@ -118,7 +118,7 @@ private:
 			{
 				head = tail = min;
 			}
-			else 
+			else
 			{
 				tail->sibling = min;
 				tail = min;
@@ -177,13 +177,13 @@ public:
 		return extractOperationsQuantity;
 	}
 
-	void Insert(int key) 
+	void Insert(int key)
 	{
 		Node* newNode = new Node(key);
 		head = Union(head, newNode, true);
 	}
 
-	long long ExtractMin() 
+	long long ExtractMin()
 	{
 		if (!head) return -1;
 		Node* minNodePrev = nullptr;
@@ -194,7 +194,7 @@ public:
 
 		while (next->sibling)
 		{
-			if (next->sibling->key < minKey) 
+			if (next->sibling->key < minKey)
 			{
 				minKey = next->sibling->key;
 				minNodePrev = next;
@@ -229,7 +229,7 @@ public:
 		if (!head) return -1;
 		int minKey = head->key;
 		Node* current = head->sibling;
-		while (current) 
+		while (current)
 		{
 			if (current->key < minKey) minKey = current->key;
 			current = current->sibling;
@@ -278,9 +278,12 @@ int main() {
 	}
 
 	binominalHeap.PerformRandomOperation(200000);
-	cout << "Insert duration: " << binominalHeap.getInsertTime() << endl;
-	cout << "Extract min value duration: " << binominalHeap.getExtractMinTime() << endl;
-	cout << "Insert operations: " << binominalHeap.getInsertOperationsQuantity() << endl;
-	cout << "Extract min value operations: " << binominalHeap.getExtractOperationsQuantity() << endl;
+	cout << "Ins duration: " << binominalHeap.getInsertTime() << endl;
+	cout << "Ins operations: " << binominalHeap.getInsertOperationsQuantity() << endl;
+
+	cout << endl;
+
+	cout << "Ext duration: " << binominalHeap.getExtractMinTime() << endl;
+	cout << "Ext min value operations: " << binominalHeap.getExtractOperationsQuantity() << endl;
 	return 0;
 }
